@@ -211,15 +211,17 @@ function App() {
             data.map((item, index) =>
               <div key={index} className="col-3 col-sm-6 col-md-4">
                 <div className="productItem">
+                  <div className="imgContainer">
                   <img
                     className="ProductImg"
                     src={item.image_link}
                     onError={(e)=>{e.target.onerror = null; e.target.src=require('./images/notavailable.png').default}}
                     alt="product"
                   />
+                  </div>
 
                   <div className="content">
-                    <h3>{item.name + item.id}</h3>
+                    <h3>{item.name}</h3>
                     <p className="product-description">
                       {item.description}
                     </p>
