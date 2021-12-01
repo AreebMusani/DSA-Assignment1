@@ -4,115 +4,13 @@ import products from './database/products.json'
 
 function App() {
   const [data, setdata] = useState(products);
-  const [timeConsumed, settimeConsumed] = useState(0.00);
+  const [NoOfComparision, setNoOfComparision] = useState(0.00);
   const [searchTypeisLinear, setsearchTypeisLinear] = useState(true);
   const [searchText, setsearchText] = useState();
   const [isSearched, setisSearched] = useState(false);
-
-  useEffect(() => {
-    // fetch("http://makeup-api.herokuapp.com/api/v1/products.json")
-    // .then(response => response.json())
-    // .then(data => console.log(data))
-    // .catch(error => console.log(error));
-    console.log(data);
-  })
-
-  const Sorting = (arr, sortUsing, sortBy) => {
-    setisSearched(false);
-    setsearchText('');
-    let array = arr.slice();
-    if (sortBy === "ascending") {
-      for (let i = 0; i < array.length; i++) {
-        let minIndex = i;
-        for (let j = i + 1; j < array.length; j++) {
-          if (array[j][sortUsing] < array[minIndex][sortUsing]) {
-            minIndex = j;
-          }
-        }
-        [array[i], array[minIndex]] = [array[minIndex], array[i]];
-      }
-    } else {
-      for (let i = 0; i < array.length; i++) {
-        let minIndex = i;
-        for (let j = i + 1; j < array.length; j++) {
-          if (array[j][sortUsing] > array[minIndex][sortUsing]) {
-            minIndex = j;
-          }
-        }
-        [array[i], array[minIndex]] = [array[minIndex], array[i]];
-      }
-    }
-    setdata(array);
-  }
-
-  const BinarySearch = (products, text) => {
-    let start = 0, end = products.length - 1, mid = 0;
-    while (start <= end) {
-      mid = Math.floor(start + (end - start) / 2);
-      if (Number(text) === products[mid].id) {
-        return mid;
-      }
-      else if (Number(text) < products[mid].id) {
-        start = mid + 1;
-      }
-      else {
-        end = mid - 1;
-      }
-    }
-    return -1;
-  }
-
-  const LinearSearch = (products, text) => {
-    for (let i = 0; i < products.length; i++)
-      if (products[i].id === Number(text))
-        return i;
-    return -1;
-  }
-
-  const onSearch = (text) => {
-    settimeConsumed(0);
-    //if search field is empty
-    if (text === null || text === '') {
-      setdata(products);
-    } else {
-      const startTime = +new Date();
-      const searchedIndex = searchTypeisLinear ? LinearSearch(products, text) : BinarySearch(products, text);
-
-      //If product not found
-      if (searchedIndex === -1) {
-        setisSearched(true);
-        setdata([]);
-        console.log("not available");
-      }
-      //product found
-      else {
-        setisSearched(true);
-        setdata([products[searchedIndex]]);
-      }
-
-      const endTime = +new Date();
-      timer((endTime - startTime).toFixed(2))
-    }
-  }
-
-  const timer = (endTime) => {
-    console.log(endTime)
-    let timeout = 20;
-    for(let i = 0.00; i <= Number(endTime); i = i + 0.01)
-    {
-      setTimeout(() => {
-        settimeConsumed(i.toFixed(2));
-      }, timeout);
-      timeout += 20;
-    }
-  }
-
-  const cancelAllSearches = () => {
-    setdata(products);
-    setisSearched(false);
-    setsearchText('')
-  }
-
+  
+  
+  // Sorting Section
   const SortOptions = (e) => {
     if (e === "0")
       setdata(products);
@@ -125,6 +23,136 @@ function App() {
     else if (e === "4")
       Sorting(products, "name", "descending");
   }
+  
+  const Sorting = (arr, sortUsing, sortBy) => {
+    setisSearched(false);                           // hide search result text
+    setsearchText('');                              // clear text from from search box      
+    let array = arr.slice();                        // Copy array from index 0 to last index
+    if (sortBy === "ascending") {
+      for (let i = 0; i < array.length; i++) {
+        let minIndex = i;
+        for (let j = i + 1; j < array.length; j++) {
+          const currentIndexPrice = sortUsing == "price" ? Number(array[j][sortUsing]) : array[j][sortUsing];
+          const maxIndexPrice = sortUsing == "price" ? Number(array[minIndex][sortUsing]) : array[minIndex][sortUsing];
+          if (currentIndexPrice < maxIndexPrice) {
+            minIndex = j;
+          }
+        }
+
+        //Swapping minimum value to the current index
+        const temp = array[i];
+        array[i] = array[minIndex];
+        array[minIndex] = temp;
+        // [array[i], array[minIndex]] = [array[minIndex], array[i]];
+      }
+    } 
+    //Descending Order
+    else {
+      for (let i = 0; i < array.length; i++) {
+        let maxIndex = i;
+        for (let j = i + 1; j < array.length; j++) {
+          const currentIndexPrice = sortUsing == "price" ? Number(array[j][sortUsing]) : array[j][sortUsing];
+          const maxIndexPrice = sortUsing == "price" ? Number(array[maxIndex][sortUsing]) : array[maxIndex][sortUsing];
+          if (currentIndexPrice > maxIndexPrice) {
+            maxIndex = j;
+          }
+        }
+
+        //Swapping maximum value to the current index
+        const temp = array[i];
+        array[i] = array[maxIndex];
+        array[maxIndex] = temp;
+        // [array[i], array[maxIndex]] = [array[maxIndex], array[i]];
+      }
+    }
+    setdata(array);
+  }
+  // Sorting Section End
+
+
+  // Search Section
+  const onSearch = (text) => {
+    // setNoOfComparision(0);
+    //if search field is empty
+    if (text === null || text === '') {
+      setdata(products);
+    } else {
+      // const startTime = +new Date();
+      const searchedIndex = searchTypeisLinear ? LinearSearch(products, text) : BinarySearch(products, text);
+
+      //If product not found
+      if (searchedIndex === -1) {
+        setisSearched(true);
+        setdata([]);
+      }
+      //product found
+      else {
+        setisSearched(true);
+        setdata([products[searchedIndex]]);
+      }
+
+      // const endTime = +new Date();
+      // timer((endTime - startTime).toFixed(2))
+    }
+  }
+
+  const BinarySearch = (products, text) => {
+    let count = 0;
+    let start = 0, end = products.length - 1, mid = 0;
+    while (start <= end) {
+      count++;
+      mid = Math.floor(start + (end - start) / 2);
+      if (Number(text) === products[mid].id) {
+        timer(count);
+        return mid;
+      }
+      else if (Number(text) < products[mid].id) {
+        start = mid + 1;
+      }
+      else {
+        end = mid - 1;
+      }
+    }
+    timer(count);
+    return -1;
+  }
+
+  const LinearSearch = (products, text) => {
+    let count = 0;
+    for (let i = 0; i < products.length; i++)
+    {
+      count ++;
+      if (products[i].id === Number(text))
+      {
+        timer(count);
+        return i;
+      }
+    }
+    timer(count);
+    return -1;
+    
+  }
+  
+  // Search Section End
+
+  const timer = (endTime) => {
+    setNoOfComparision(0);
+    let timeout = 10;
+    for(let i = 0; i <= Number(endTime); i++)
+    {
+      setTimeout(() => {
+        setNoOfComparision(i);
+      }, timeout);
+      timeout += 10;
+    }
+  }
+
+  const cancelAllSearches = () => {
+    setdata(products);
+    setisSearched(false);
+    setsearchText('')
+  }
+
   return (
     <div className="main">
       <div className="container">
@@ -143,8 +171,8 @@ function App() {
 
 
           <div className="speedMeter">
-            <p>{timeConsumed}</p>
-            <p>milliseconds</p>
+            <p>{NoOfComparision}</p>
+            <p>no of comparisions</p>
           </div>
 
           <div className="d-flex flex-column align-items-end mb-3">
@@ -185,14 +213,13 @@ function App() {
                 <div className="productItem">
                   <img
                     className="ProductImg"
-                    src={item.image_link || require('./images/notavailable.png').default}
-                    // ref={img => this.img = img}
-                    // onError={() => this.img.src = require('./images/notavailable.png').default} 
+                    src={item.image_link}
+                    onError={(e)=>{e.target.onerror = null; e.target.src=require('./images/notavailable.png').default}}
                     alt="product"
                   />
 
                   <div className="content">
-                    <h3>{item.name}</h3>
+                    <h3>{item.name + item.id}</h3>
                     <p className="product-description">
                       {item.description}
                     </p>

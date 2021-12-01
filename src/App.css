@@ -34,11 +34,18 @@ p{
 }
 
 .productItem {
-  border: grey 1px solid;
-    border-radius: 6px;
-    margin-bottom: 20px;
-    /* box-shadow: grey 5px 3px; */
-    overflow: hidden;
+  box-shadow: 2px 2px 5px #222;
+  /* border: grey 1px solid; */
+  border-radius: 6px;
+  margin-bottom: 20px;
+  /* box-shadow: grey 5px 3px; */
+  overflow: hidden;
+  transition: all 300ms ease-in-out;
+}
+
+.productItem:hover{
+  box-shadow: 8px 8px 14px #222;
+  cursor: pointer;
 }
 
 .product-description{
@@ -141,6 +148,9 @@ text-decoration: underline;
   margin-left: 10px;
   height: 40px;
 }
+.Sorting-Dropdown:hover{
+  cursor: pointer;
+}
 
 
 /* speedMeter */
@@ -152,6 +162,7 @@ text-decoration: underline;
   text-align: center;
   border-radius: 5px;
   box-shadow: 5px 5px 3px #b9b9b9;
+  transition: all 300ms ease-in-out;
 }
 .speedMeter:hover{
   background-color: green;
